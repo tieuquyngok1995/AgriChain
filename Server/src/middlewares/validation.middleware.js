@@ -6,6 +6,32 @@
 import { ValidationError } from "./error.middleware.js";
 
 /**
+ * Validate required fields in request body
+ * @param {Array} requiredFields - Array of required field names
+ * @returns {Function} - Express middleware function
+ */
+export const validateRequiredFields = (requiredFields, source = "body") => {
+  return (req, res, next) => {
+    const data = req[source] || {};
+    const missingFields = requiredFields.filter(
+      (field) =>
+        data[field] === undefined || data[field] === null || data[field] === ""
+    );
+
+    if (missingFields.length) {
+      return next(
+        new ValidationError(
+          `Missing required fields: ${missingFields.join(", ")}`,
+          missingFields
+        )
+      );
+    }
+
+    next();
+  };
+};
+
+/**
  * Validate Ethereum address format
  * @param {string} address - Address to validate
  * @returns {boolean} - True if valid
@@ -23,36 +49,6 @@ export const isValidEthereumAddress = (address) => {
 export const isValidTransactionHash = (hash) => {
   const hashRegex = /^0x[a-fA-F0-9]{64}$/;
   return hashRegex.test(hash);
-};
-
-/**
- * Validate required fields in request body
- * @param {Array} requiredFields - Array of required field names
- * @returns {Function} - Express middleware function
- */
-export const validateRequiredFields = (requiredFields) => {
-  return (req, res, next) => {
-    const missingFields = [];
-
-    requiredFields.forEach((field) => {
-      if (
-        !req.body[field] &&
-        req.body[field] !== 0 &&
-        req.body[field] !== false
-      ) {
-        missingFields.push(field);
-      }
-    });
-
-    if (missingFields.length > 0) {
-      throw new ValidationError(
-        `Missing required fields: ${missingFields.join(", ")}`,
-        missingFields
-      );
-    }
-
-    next();
-  };
 };
 
 /**

@@ -8,6 +8,7 @@ import userRouter from "./user.route.js";
 import transactionRoutes from "./transaction.routes.js";
 import agrichainRoutes from "./agrichain.routes.js";
 import fileRoutes from "./file.routes.js";
+import farmerRoutes from "./farmer.routes.js";
 
 const router = Router();
 
@@ -21,6 +22,7 @@ router.get("/", (req, res) => {
       "Blockchain-based agricultural data integrity and traceability system",
     endpoints: {
       users: "/api/users",
+      farmers: "/api/farmers",
       transactions: "/api/transactions",
       agrichain: "/api/agrichain",
       files: "/api/files",
@@ -39,6 +41,7 @@ router.get("/", (req, res) => {
 
 // Route modules
 router.use("/users", userRouter);
+router.use("/farmers", farmerRoutes);
 router.use("/transactions", transactionRoutes);
 router.use("/agrichain", agrichainRoutes);
 router.use("/files", fileRoutes);
